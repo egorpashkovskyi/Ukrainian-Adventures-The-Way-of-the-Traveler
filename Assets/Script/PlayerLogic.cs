@@ -2,12 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerLogic : MonoBehaviour
 {
     [SerializeField] private GameObject _playerBody;
+    [SerializeField] private Rigidbody _rb;
+    [SerializeField] private Transform _groundCheckCollider;
+    [SerializeField] private LayerMask _groundLayer;
 
-    private int _speed = 3;
+    [SerializeField] private bool _isGrounded;
+    private float _jumpForse = 250f;
+
+    private int _speed = 2;
 
     private void FixedUpdate()
     {
@@ -17,12 +24,23 @@ public class PlayerLogic : MonoBehaviour
             {
                 MoveVertical();
             }
+
             if (Input.GetButton("Horizontal"))
             {
                 MoveHorizontal();
             }
         }
+
+    }
+
+    private void Update()
+    {
+        GroundCheck();
         
+        if (Input.GetButtonDown("Jump") && _isGrounded)
+        {
+            Jump();
+        }
     }
 
     private void MoveVertical()
@@ -39,6 +57,7 @@ public class PlayerLogic : MonoBehaviour
             _playerBody.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
         }*/
     }
+
     private void MoveHorizontal()
     {
         Vector3 dir = transform.forward * Input.GetAxis("Horizontal");
@@ -54,4 +73,18 @@ public class PlayerLogic : MonoBehaviour
         }*/
     }
 
+    private void Jump()
+    {
+        _rb.AddForce(Vector2.up * _jumpForse);
+    }
+    
+    private void GroundCheck()
+    {
+        _isGrounded = false;
+        Collider[] colliders = Physics.OverlapSphere(_groundCheckCollider.position, 0.1f, _groundLayer);
+        if (colliders.Length > 0)
+        {
+            _isGrounded = true;
+        }
+    }
 }
