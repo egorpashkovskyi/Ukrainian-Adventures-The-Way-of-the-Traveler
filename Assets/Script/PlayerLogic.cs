@@ -5,8 +5,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class PlayerLogic : MonoBehaviour
-{
-    [SerializeField] private GameObject _playerBody;
+{ 
+    [SerializeField] private GameObject _playerBackpack;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Transform _groundCheckCollider;
     [SerializeField] private LayerMask _groundLayer;
@@ -14,20 +14,25 @@ public class PlayerLogic : MonoBehaviour
     [SerializeField] private bool _isGrounded;
     private float _jumpForse = 250f;
 
+    public bool _sceneTrigger;
+
     private int _speed = 2;
 
     private void FixedUpdate()
     {
-        if (!(Input.GetButton("Vertical") && Input.GetButton("Horizontal")))
+        if (_sceneTrigger == false)
         {
-            if (Input.GetButton("Vertical"))
+            if (!(Input.GetButton("Vertical") && Input.GetButton("Horizontal")))
             {
-                MoveVertical();
-            }
+                if (Input.GetButton("Vertical"))
+                {
+                    MoveVertical();
+                }
 
-            if (Input.GetButton("Horizontal"))
-            {
-                MoveHorizontal();
+                if (Input.GetButton("Horizontal"))
+                {
+                    MoveHorizontal();
+                }
             }
         }
 
@@ -36,10 +41,13 @@ public class PlayerLogic : MonoBehaviour
     private void Update()
     {
         GroundCheck();
-        
-        if (Input.GetButtonDown("Jump") && _isGrounded)
+
+        if (_sceneTrigger == false)
         {
-            Jump();
+            if (Input.GetButtonDown("Jump") && _isGrounded)
+            {
+                Jump();
+            }
         }
     }
 
@@ -50,11 +58,11 @@ public class PlayerLogic : MonoBehaviour
 
         /*if (dir.x < 0.0f)
         {
-            _playerBody.transform.localScale = new Vector3(-0.25f, 0.25f, 0.25f);
+            _playerBackpack.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
         }
         else
         {
-            _playerBody.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            _playerBackpack.transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
         }*/
     }
 
@@ -63,13 +71,13 @@ public class PlayerLogic : MonoBehaviour
         Vector3 dir = transform.forward * Input.GetAxis("Horizontal");
         transform.position = Vector3.MoveTowards(transform.position, transform.position - dir, _speed * Time.deltaTime);
 
-        /*if (dir.x < 0.0f)
+        /*if (dir.z < 0.0f)
         {
-            _playerBody.transform.localScale = new Vector3(-0.25f, 0.25f, 0.25f);
+            _playerBackpack.transform.rotation = new Quaternion(0f, 90f, 0f, 0f);
         }
         else
         {
-            _playerBody.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            _playerBackpack.transform.rotation = new Quaternion(0f, -90f, 0f, 0f);
         }*/
     }
 
